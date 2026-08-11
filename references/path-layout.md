@@ -1,11 +1,11 @@
 # Path Layout Reference
 
-Use this reference when mapping the canonical project path into the global plans root.
+Use this reference when mapping a canonical project path to one collision-safe flat directory beneath the global plans root.
 
 ## Conceptual layout
 
 ```text
-<global-plans-root>/<mirrored-canonical-project-path>/
+<global-plans-root>/<canonical-project-path-slug>--<path-hash>/
 └── YYYY-MM-DD-HHmmss-<plan-slug>/
     ├── plan.md
     └── tasks.md
@@ -13,56 +13,35 @@ Use this reference when mapping the canonical project path into the global plans
 
 All placeholder values are resolved at runtime.
 
-## POSIX paths
+## Flat project directory
 
-For a canonical project path with the form:
-
-```text
-/<project-path-components>
-```
-
-remove only the leading filesystem separator and append the remaining components beneath the global plans root:
-
-```text
-<global-plans-root>/<project-path-components>
-```
-
-Preserve the canonical path components. Do not replace them with a shortened project slug.
-
-## Windows drive paths
-
-For a canonical project path with the form:
+1. Canonicalize the project path first.
+2. Convert every path separator and unsupported filename character to `-`.
+3. Collapse repeated `-` characters and trim leading and trailing `-` characters. Preserve letter case for readability.
+4. Limit `<canonical-project-path-slug>` to 120 characters before appending the hash. This keeps the directory name safely within filesystem limits; the hash remains the identity.
+5. Compute the SHA-256 digest of the complete canonical project path encoded as UTF-8. Use its first 10 lowercase hexadecimal characters as `<path-hash>`.
+6. Join the readable slug and hash with exactly `--`.
 
 ```text
-<drive-letter>:\<project-path-components>
+<global-plans-root>/<canonical-project-path-slug>--<path-hash>/
 ```
 
-map it to:
+The hash prevents collisions when different paths become the same slug. Do not omit it, truncate the canonical path before hashing, or use the slug as the identifier.
+
+Examples:
 
 ```text
-<global-plans-root>/<drive-letter>/<project-path-components>
+/Users/kazim/local-sites/plovercrm
+→ <global-plans-root>/Users-kazim-local-sites-plovercrm--<first-10-sha256>/
+
+/a-b/c
+→ <global-plans-root>/a-b-c--<first-10-sha256>/
+
+/a/b-c
+→ <global-plans-root>/a-b-c--<different-first-10-sha256>/
 ```
 
-Rules:
-
-- Detect the drive letter at runtime.
-- Remove the colon.
-- Convert separators into the platform-appropriate separator used for creating the target path.
-- Never assume a particular drive letter or user directory.
-
-## Windows UNC paths
-
-For a canonical UNC path with the form:
-
-```text
-\\<server>\<share>\<project-path-components>
-```
-
-map it to:
-
-```text
-<global-plans-root>/UNC/<server>/<share>/<project-path-components>
-```
+Apply these same rules to POSIX paths, Windows drive paths, and Windows UNC paths after canonicalization. Never assume a particular drive letter, user directory, server, or share.
 
 ## Safety checks
 

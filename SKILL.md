@@ -1,6 +1,6 @@
 ---
 name: writing-project-plans
-description: Creates comprehensive implementation plans and sequential AI-executable task checklists before code changes. Use for feature requests, bug fixes, refactors, migrations, architecture changes, specifications, or any software work that benefits from a reviewed plan.md and tasks.md. Stores each planning package outside the project under a configurable global plans root that mirrors the canonical project path.
+description: Creates comprehensive implementation plans and sequential AI-executable task checklists before code changes. Use for feature requests, bug fixes, refactors, migrations, architecture changes, specifications, or any software work that benefits from a reviewed plan.md and tasks.md. Stores each planning package outside the project under a configurable global plans root in a collision-safe flat project directory.
 metadata:
   version: "1.0.0"
   category: "development"
@@ -75,17 +75,17 @@ Use this precedence:
 
 Expand the selected root before use. Keep it outside the project unless the user explicitly requests project-local storage.
 
-## Mirror the canonical project path
+## Derive the project planning directory
 
-Mirror the complete canonical project path beneath the global plans root using the rules in [references/path-layout.md](references/path-layout.md).
+Create one flat, collision-safe directory beneath the global plans root using the rules in [references/path-layout.md](references/path-layout.md).
 
 The resulting project planning root has this conceptual form:
 
 ```text
-<global-plans-root>/<mirrored-canonical-project-path>/
+<global-plans-root>/<canonical-project-path-slug>--<path-hash>/
 ```
 
-The path values are discovered at runtime. Never hard-code a username, home directory, drive letter, workspace directory, project name, or project path.
+Derive the readable slug and hash from the canonical project path at runtime. Never hard-code a username, home directory, drive letter, workspace directory, project name, or project path.
 
 ## Create the planning package
 
@@ -117,7 +117,7 @@ Treat `datas.md` as a typo for `tasks.md` unless the user explicitly requires th
 
 ## Protect private information
 
-Mirroring an absolute project path can expose local directory names. Keep the global plans root private by default.
+The readable project-directory slug can expose local directory names. Keep the global plans root private by default.
 
 Do not place secrets, tokens, credentials, private keys, connection strings, sensitive customer data, or URL query strings in paths or planning files.
 

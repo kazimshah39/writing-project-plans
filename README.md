@@ -37,7 +37,7 @@ The skill follows this sequence:
 Packages use this layout:
 
 ```text
-<plans-root>/<canonical-project-path>/
+<plans-root>/<canonical-project-path-slug>--<path-hash>/
 └── YYYY-MM-DD-HHmmss-<plan-slug>/
     ├── plan.md
     └── tasks.md
@@ -49,7 +49,7 @@ The plans root is selected in this order:
 2. The `AGENT_PLANS_ROOT` environment variable
 3. `~/.agent/plans`
 
-For POSIX paths, the project’s canonical absolute path is mirrored beneath the plans root without its leading `/`. This keeps plans for separate checkouts separate.
+The project path becomes one readable flat directory name, followed by `--` and the first 10 lowercase hexadecimal characters of its SHA-256 hash. For example, `/Users/kazim/local-sites/plovercrm` becomes `Users-kazim-local-sites-plovercrm--<first-10-sha256>`. The hash keeps plans for separate checkouts separate even when their flattened names match.
 
 ## Using the skill
 

@@ -17,7 +17,7 @@ Check:
 
 1. Metadata and path identity
    - Project and planning paths are resolved at runtime and accurate.
-   - The package mirrors the complete canonical project path beneath the configured global root.
+   - The package is beneath the configured global root in the required flat `<canonical-project-path-slug>--<path-hash>` directory.
    - Branch, commit, timestamp, and timezone are accurate or marked unavailable.
 
 2. Requirement coverage
